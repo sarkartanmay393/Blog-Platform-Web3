@@ -5,12 +5,25 @@ body {
 
 button {
     padding: 16px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Helvetica Neue";
     font-size: 16px;
     background-color: black;
+    font-weight: bold;
     color: white;
     border-radius: 8px;
     cursor: pointer;
+    border: 1px #333232 solid;
+
+    margin: 2rem auto;
+
+}
+
+#explore-link {
+    text-decoration: none;
+    color: white;
+}
+#explore-link:hover {
+    color: lightgreen;
 }
 
 h3, h4 {
@@ -82,7 +95,7 @@ p {
 }
 
 .container {
-    margin: 1rem;
+    margin: 1.2rem;
 }
 
 ul {
@@ -99,6 +112,31 @@ li {
     font-size: 1.2rem;
     padding: 3px;
     text-decoration: none;
+}
+
+#home-page-icon {
+    image-rendering: optimizeSpeed;
+}
+
+.card {
+    width: 20rem;
+    margin: 1rem auto;
+    padding: 0.6rem;
+    border: 1px solid black;
+    font-size: 1.2rem;
+}
+
+#github-card-link {
+    text-decoration: none;
+    color: darkgreen;
+}
+
+.row {
+    display: flex;
+}
+
+#github-icon-on-card {
+    image-rendering: optimizeSpeed;
 }
 
 #add-comment-form {
