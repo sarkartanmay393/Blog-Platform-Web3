@@ -10,7 +10,6 @@ export default function App() {
     return (
         <BrowserRouter>
             <div className="App">
-                {/*<h1>Let us blog together</h1>*/}
                 <div id="nav-bar-container">
                     <NavBar />
                 </div>
