@@ -28,7 +28,7 @@ app.put("/api/articles/:name/upvote", async (req, res) => {
 
     const article = await db.collection("articles").findOne({ name });
     if (article) {
-        res.send(`This ${article.name} article now has ${article.upvotes} upvote`);
+        res.json(article);
     } else {
         res.status(404).send("No matching article found!");
     }
