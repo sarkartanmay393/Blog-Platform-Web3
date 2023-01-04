@@ -1,5 +1,5 @@
 import {useState} from "react";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const CreateAccount = () => {
@@ -11,7 +11,7 @@ const CreateAccount = () => {
 
     const createAccount = async () => {
         try {
-            if (password != confirmPassword) {
+            if (password !== confirmPassword) {
                 setError("Passwords didn't match!")
                 return;
             }
@@ -44,7 +44,7 @@ const CreateAccount = () => {
                            value={password}
                            onChange={e => setPassword(e.target.value)}
                            onKeyPress={ (k) => {
-                               if (password.length > 4 && k.key == "Enter") {
+                               if (password.length > 4 && k.key === "Enter") {
                                    k.preventDefault();
                                    document.getElementById("login-btn").click();
                                }
@@ -59,7 +59,7 @@ const CreateAccount = () => {
                            value={confirmPassword}
                            onChange={e => setConfirmPassword(e.target.value)}
                            onKeyPress={ (k) => {
-                               if (confirmPassword.length > 4 && password === confirmPassword && k.key == "Enter") {
+                               if (confirmPassword.length > 4 && password === confirmPassword && k.key === "Enter") {
                                    k.preventDefault();
                                    document.getElementById("login-btn").click();
                                }

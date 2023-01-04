@@ -1,15 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
+import useUser from "../hooks/useUser";
 
-const CommentList = ({ comments, articleId, onArticleUpdate, user }) => {
-    const [username, setUsername] = useState("rad");
+const CommentList = ({ comments, articleId, onArticleUpdate }) => {
     const [comment, setComment] = useState("");
+    const { user } = useUser();
 
     const sendComment = async () => {
-        const response = await axios.post(`/api/articles/${articleId}/comments`, {
-            username: username,
-            comment: comment
-        });
+        const token = user && await user.getIdToken();
+        const headers = token ? { authToken: token } : {};
+        const response = await axios.post(`/api/articles/${articleId}/comments`, { email: user.email, comment: comment }, { headers });
         const updatedArticle = response.data;
         setComment("");
 
@@ -22,6 +22,7 @@ const CommentList = ({ comments, articleId, onArticleUpdate, user }) => {
         <>
             <h4>Comments:</h4>
             {user ? <div className='form'>
+                <p className="commenting-as-el">You are commenting as <code>{user.email}</code></p>
                 <input
                     id='comment-input-area'
                     type='text'
@@ -30,7 +31,7 @@ const CommentList = ({ comments, articleId, onArticleUpdate, user }) => {
                     value={comment}
                     onChange={e => setComment(e.target.value)}
                     onKeyPress={(e) => {
-                        if (e.key == 'Enter') {
+                        if (e.key === 'Enter') {
                             e.preventDefault();
                             sendComment();
                         }

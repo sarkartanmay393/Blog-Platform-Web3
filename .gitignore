@@ -23,6 +23,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Database data
+/backend/mongodb-data/
 
-./backend/mongodb-data/
-backend/mongodb-data/
+# secrets
+/backend/firebase-secrets.json

@@ -1,24 +1,25 @@
 import { useState, useEffect } from "react";
-import {Form, useNavigate, useNavigationType, useParams} from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
 import articles from "./article-contents";
 import NotFoundPage from "./NotFoundPage";
 import axios from "axios";
 import CommentList from '../components/CommentList';
 import useUser from '../hooks/useUser';
 
-const ArticlePage = function () {
+const ArticlePage = () => {
     const { articleId } = useParams();
-    const [ articleInfo, setArticleInfo ] = useState({ upvotes: 0, comments: [] });
-    const { user, isLoading } = useUser();
+    const [articleInfo, setArticleInfo] = useState({ upvotes: 0, comments: [] });
+    const { user } = useUser();
 
     useEffect(() => {
-        async function loadArticleInformation () {
-            const response = await axios.get(`/api/articles/${articleId}`);
+        const loadArticleInformation = async () => {
+            const token = user && await user.getIdToken();
+            const headers = token ? {authToken: token} : {};
+            const response = await axios.get(`/api/articles/${articleId}`, { headers });
             const newArticleInfo = response.data;
             setArticleInfo(newArticleInfo);
         }
-
+        
         loadArticleInformation();
     }, []);
 
@@ -27,10 +28,12 @@ const ArticlePage = function () {
     const navigate = useNavigate();
 
     const addUpvote = async () => {
-        const response = await axios.put(`/api/articles/${articleId}/upvote`);
+        const token = user && await user.getIdToken();
+        const headers = token ? {authToken: token} : {};
+        const response = await axios.put(`/api/articles/${articleId}/upvote`, null, { headers });
         const updatedArticle = response.data;
         setArticleInfo(updatedArticle);
-    };
+    }
 
     if (article) {
         return (
@@ -45,14 +48,13 @@ const ArticlePage = function () {
 
                 <hr />
 
-                { user ?
+                {user ?
                     <button className='upvote-btn' onClick={addUpvote}>
-                        <img src={upvote_icon} height='24'/>
+                        <img src={upvote_icon} height='24' />
                         <span>Upvote</span>
                     </button>
                     :
-                    <button className='signin-btn' onClick={ () => {navigate("/login")} }>
-                        {/*<img src={upvote_icon} height='24'/>*/}
+                    <button className='signin-btn' onClick={() => { navigate("/login") }}>
                         <span>Login to upvote</span>
                     </button>
                 }
@@ -63,15 +65,14 @@ const ArticlePage = function () {
                     <CommentList
                         comments={articleInfo.comments}
                         articleId={articleId}
-                        onArticleUpdate={ (updatedArticle) => {setArticleInfo(updatedArticle)} }
-                        user={user}
+                        onArticleUpdate={(updatedArticle) => { setArticleInfo(updatedArticle) }}
                     />
                 </div>
             </>
         );
     } else {
         return (
-            <NotFoundPage/>
+            <NotFoundPage />
         );
     }
 }

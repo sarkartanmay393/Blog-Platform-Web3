@@ -40,7 +40,7 @@ const LoginPage = () => {
                        value={password}
                        onChange={e => setPassword(e.target.value)}
                        onKeyPress={ (k) => {
-                           if (password.length > 4 && k.key == "Enter") {
+                           if (password.length > 4 && k.key === "Enter") {
                                k.preventDefault();
                                document.getElementById("login-btn").click();
                            }

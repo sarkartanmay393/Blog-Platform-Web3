@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import useUser from "./hooks/useUser";
+import useUser from "../hooks/useUser";
 import { getAuth, signOut } from "firebase/auth";
 
 const NavBar = () => {
-    const { user, isLoading } = useUser();
+    const { user } = useUser();
     const navigate = useNavigate();
 
     const logout = async () => {

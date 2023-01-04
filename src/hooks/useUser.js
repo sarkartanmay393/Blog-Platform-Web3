@@ -5,7 +5,7 @@ const useUser = () => {
         const [user, setUser] = useState(null);
         const [isLoading, setIsLoading] = useState(true);
 
-        useEffect( () => {
+        useEffect(() => {
                 const unsubscribe = onAuthStateChanged(getAuth(), (updatedUser) => {
                         setUser(updatedUser);
                         setIsLoading(false);
