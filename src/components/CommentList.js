@@ -8,7 +8,7 @@ const CommentList = ({ comments, articleId, onArticleUpdate }) => {
 
     const sendComment = async () => {
         const token = user && await user.getIdToken();
-        const headers = token ? { authToken: token } : {};
+        const headers = token ? { authtoken: token } : {};
         const response = await axios.post(`/api/articles/${articleId}/comments`, { email: user.email, comment: comment }, { headers });
         const updatedArticle = response.data;
         setComment("");

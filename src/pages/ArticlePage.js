@@ -8,31 +8,35 @@ import useUser from '../hooks/useUser';
 
 const ArticlePage = () => {
     const { articleId } = useParams();
-    const [articleInfo, setArticleInfo] = useState({ upvotes: 0, comments: [] });
-    const { user } = useUser();
+    const { user, isLoading } = useUser();
+    const [articleInfo, setArticleInfo] = useState({ upvotes: 0, comments: [], canUpvote: false });
+
+    const loadArticleInformation = async () => {
+        const token = user && await user.getIdToken();
+        const headers = token ? { authtoken: token } : {};
+        const response = await axios.get(`/api/articles/${articleId}`, { headers });
+        const newArticleInfo = response.data;
+        setArticleInfo(newArticleInfo);
+    }
 
     useEffect(() => {
-        const loadArticleInformation = async () => {
-            const token = user && await user.getIdToken();
-            const headers = token ? {authToken: token} : {};
-            const response = await axios.get(`/api/articles/${articleId}`, { headers });
-            const newArticleInfo = response.data;
-            setArticleInfo(newArticleInfo);
+        if (!isLoading) {
+            loadArticleInformation();
         }
-        
-        loadArticleInformation();
-    }, []);
+    }, [isLoading, user]);
 
     const article = articles.find(eachArticle => eachArticle.name === articleId);
     const upvote_icon = `https://cdn2.iconfinder.com/data/icons/essential-ui-1/32/thumbs-up-512.png`;
     const navigate = useNavigate();
 
     const addUpvote = async () => {
-        const token = user && await user.getIdToken();
-        const headers = token ? {authToken: token} : {};
-        const response = await axios.put(`/api/articles/${articleId}/upvote`, null, { headers });
-        const updatedArticle = response.data;
-        setArticleInfo(updatedArticle);
+        if (!articleInfo.canUpvote) {
+            const token = user && await user.getIdToken();
+            const headers = token ? { authtoken: token } : {};
+            const response = await axios.put(`/api/articles/${articleId}/upvote`, null, { headers });
+            const updatedArticle = response.data;
+            setArticleInfo(updatedArticle);
+        }
     }
 
     if (article) {
@@ -51,7 +55,7 @@ const ArticlePage = () => {
                 {user ?
                     <button className='upvote-btn' onClick={addUpvote}>
                         <img src={upvote_icon} height='24' />
-                        <span>Upvote</span>
+                        {articleInfo.canUpvote ? <span>Upvoted</span> : <span>Upvote</span>}
                     </button>
                     :
                     <button className='signin-btn' onClick={() => { navigate("/login") }}>

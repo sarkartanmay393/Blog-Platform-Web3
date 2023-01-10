@@ -1,10 +1,16 @@
 import express from 'express';
 import { db, connectDB } from "./database.js";
 import admin from "firebase-admin";
-import fs, { rmSync } from "fs";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from 'url';
+import "dotenv/config";
 
-const port = 8080;
+const PORT = process.env.PORT || 8080;
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Integreting firebase admin with this backend server
 const credentials = JSON.parse(fs.readFileSync("firebase-secrets.json"));
@@ -14,11 +20,13 @@ admin.initializeApp({
 
 // Middlewares
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../build")));
+
 app.use(async (req, res, next) => {
-    const { authToken } = req.headers;
-    if (authToken) {
+    const { authtoken } = req.headers;
+    if (authtoken) {
         try {
-            let temp = await admin.auth().verifyIdToken(authToken);
+            let temp = await admin.auth().verifyIdToken(authtoken);
             console.log(`Verify auth: ${temp}`);
             req.user = temp;
         } catch (e) {
@@ -30,6 +38,12 @@ app.use(async (req, res, next) => {
 
     next();
 });
+
+// Get request for all url other than '/api'
+app.get(/^(?!\/api).+/, (req, res) => {
+    console.log(req.url);
+    res.sendFile(path.join(__dirname, "../build/index.html"));
+})
 
 // Get request for getting article info
 app.get("/api/articles/:name", async (req, res) => {
@@ -71,10 +85,10 @@ app.put("/api/articles/:name/upvote", async (req, res) => {
         // console.log(`UID: ${uid}`)
 
         if (canUpvote) {
-            // await db.collection("articles").updateOne({ name }, {
-            //     $inc: { upvotes: 1 },
-            //     $push: { upvotedIds: uid }
-            // });
+            await db.collection("articles").updateOne({ name }, {
+                $inc: { upvotes: 1 },
+                $push: { upvotedIds: uid }
+            });
         }
 
         const updatedArticle = await db.collection("articles").findOne({ name });
@@ -101,11 +115,12 @@ app.post("/api/articles/:name/comments", async (req, res) => {
     }
 });
 
+
 // Main entrypoint to our server
 // This express server starts listening here by connecting to db first
 connectDB(() => {
     console.log("Database connection is established.")
-    app.listen(port, () => {
-        console.log("Server is running on port " + port);
+    app.listen(PORT, () => {
+        console.log("Server is running on port " + PORT);
     });
 });
