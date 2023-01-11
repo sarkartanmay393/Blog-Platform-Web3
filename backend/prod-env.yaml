@@ -1,0 +1,4 @@
+env_variables:
+  PORT: 8080
+  MONGO_USERNAME: "tanmaysrkr"
+  MONGO_PASSWORD: e9HXXHeZzN5c95EE

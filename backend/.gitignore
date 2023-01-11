@@ -5,6 +5,6 @@ node_modules
 ./mongodb-data
 firebase-secrets.json
 
-/build
+# /build
 
-.env
+
